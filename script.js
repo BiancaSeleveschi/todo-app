@@ -36,7 +36,7 @@ function insertToDoInList(todo) {
     //am creat un element div pt butoane si l-am asignat unei variabile
     let buttonDiv = $("<div></div>")
     //cream 2 butoane, unul pt Done si unul pt Delete
-    let doneButton = $("<button>Done</button>")
+    let doneButton = $(`<button onclick="markDoneTodo(this, ${todo.id})">Done</button>`)
     if (todo.isDone) {
         //buttonul trebuie sa fie undone si scrisul sa fie taiat
         doneButton.text("Undone")
@@ -45,9 +45,9 @@ function insertToDoInList(todo) {
     }
     doneButton.addClass("btn btn-success")
 
-    let deleteButton = $("<button>Delete</button>")
+   // let deleteButton = $('<button onclick="deleteTodo(this, todo.id)">Delete</button>')
+    let deleteButton = $(`<button onclick="deleteTodo(this, ${todo.id})">Delete</button>`)
     deleteButton.addClass("btn btn-danger mx-1")
-    deleteButton.click(deleteTodo)
 
     //append lui buttonDiv cele 2 butoane
     buttonDiv.append(doneButton)
@@ -80,23 +80,21 @@ function addToDoInList() {
 
 
 // creare functie care marcheaza done/undone (linie taiata peste scris)
-function markDoneTodo(buttonElm) {
+function markDoneTodo(buttonElm, todoId) {
+    $("#list-group-id").val() = "";
     let li = buttonElm.parentNode.parentNode;
-    let div = li.children(" :first") //div-ul care contine cnumele todo-ului
-    //extragi numele todo-ului din div div.text();
-    div.text(getTodoByNAme())
-    let todoIndex = getTodoIndexByNAme()
-    //cauti tod-uo dupa nume
-    // il markezi ca done/undone
-    toDoList[todoIndex].isDone = !toDoList[todoIndex].isDone
-}
-
-function getTodoByNAme(todoName) {
-    for (let i = 0; i < toDoList.length; i++) {
-        if (toDoList[i].name === todoName) {
-            return toDoList[i];
-        }
-    }
+    //let div = li.children(" :first").val()
+    let todoIndex = getTodoIndexById(todoId);
+    // if(toDoList[todoIndex].isDone) {
+    //     div.removeClass("text-decoration-line-through text-dark");
+    //     toDoList[todoIndex].isDone = false;
+    // }
+    // else {
+    //     div.addClass("text-decoration-line-through text-dark");
+    //     toDoList[todoIndex].isDone = false;
+    // }
+    toDoList[todoIndex].isDone = !toDoList[todoIndex].isDone;
+    displayToDoList()
 }
 
 function getTodoIndexByNAme(todoName) {
@@ -110,16 +108,24 @@ function getTodoIndexByNAme(todoName) {
 //adaugare event listener pe butonul delete
 
 //creare functie care sterge to do ul
-function deleteTodo(buttonElm) {
+function deleteTodo(buttonElm, todoId) {
     let li = buttonElm.parentNode.parentNode;
-    $("#list-group-id").empty(li);
-    let div = li.children(" :first").val()
-  //  div.text(getTodoByNAme())
-    let todoIndex = getTodoIndexByNAme(div)
-    removeTodo(todoIndex)
+    // let div = li.children(" :first").val()
+    li.remove();
+    // let todoIndex = getTodoIndexByNAme(div)
+    let todoIndex = getTodoIndexById(todoId)
+    removeTodoByIndex(todoIndex)
 }
 
-function removeTodo(index) {
+function getTodoIndexById(id){
+    for (let i = 0; i < toDoList.length; i++) {
+        if(toDoList[i].id === id) {
+            return i;
+        }
+    }
+}
+
+function removeTodoByIndex(index) {
     for (let i = index; i < toDoList.length - 1; i++) {
         toDoList[i] = toDoList[i + 1]
     }
