@@ -3,21 +3,22 @@ let toDoList = [
     {
         id: 1,
         name: "Citesc 25 de pagini",
-        isDone: true,
+        isDone: false,
+        isImportant: false,
     },
     {
         id: 2,
         name: "Sport 30 minute",
-        isDone: true,
+        isDone: false,
+        isImportant: false,
     },
     {
         id: 3,
         name: "Beau 3 litri de apa",
         isDone: false,
+        isImportant: false,
     }
 ]
-let todo = $("<h1>Titlu</h1>")
-$("body").append(todo);
 
 //creare functie care afiseaza datele din aplicatie (lista de to do-uri)
 function displayToDoList() {
@@ -30,43 +31,36 @@ function displayToDoList() {
 }
 
 function insertToDoInList(todo) {
-    //cream un div in care punem numele todo-ului si unul pt butoane
-    //am creat un element div pt numele todo-ului si l-am asgnat unei variabile
     let nameDiv = $("<div></div>").text(todo.name)
-    //am creat un element div pt butoane si l-am asignat unei variabile
     let buttonDiv = $("<div></div>")
-    //cream 2 butoane, unul pt Done si unul pt Delete
     let doneButton = $(`<button onclick="markDoneTodo(this, ${todo.id})">Done</button>`)
-    if (todo.isDone) {
-        //buttonul trebuie sa fie undone si scrisul sa fie taiat
-        doneButton.text("Undone")
-        nameDiv.addClass("text-decoration-line-through text-dark")
-        doneButton.click(markDoneTodo)
-    }
+    // if (todo.isDone) {
+    //         doneButton.text("Done")
+    //       nameDiv.addClass("text-decoration-line-through text-dark")
+    // }
     doneButton.addClass("btn btn-success")
 
-   // let deleteButton = $('<button onclick="deleteTodo(this, todo.id)">Delete</button>')
+    // let deleteButton = $('<button onclick="deleteTodo(this, todo.id)">Delete</button>')
     let deleteButton = $(`<button onclick="deleteTodo(this, ${todo.id})">Delete</button>`)
     deleteButton.addClass("btn btn-danger mx-1")
 
-    //append lui buttonDiv cele 2 butoane
+    let importantButton = $(`<button onclick="markImportantTodo(this, ${todo.id}" class='btn btn-link bookmark'><i class='fa fa-bookmark-o'></i></button>`);
+
+    buttonDiv.append(importantButton)
     buttonDiv.append(doneButton)
     buttonDiv.append(deleteButton)
-    //cream un li care contine div-urile
+
     let liTodo = $("<li></li>")
     liTodo.addClass("list-group-item my-3 border border-2 rounded border-primary d-flex justify-content-between")
+
     liTodo.append(nameDiv)
     liTodo.append(buttonDiv)
-    //selectam ul dupa id si ii apenduim liTodo
     $("#list-group-id").append(liTodo)
 }
 
 displayToDoList();
 
 
-//adaugare event listener pe butonul add
-
-//creare functie care sa adauge valoarea din input in lista
 function addToDoInList() {
     let todo = {};
     todo.name = $("#add-input").val();
@@ -74,40 +68,47 @@ function addToDoInList() {
     toDoList[toDoList.length] = todo;
     insertToDoInList(todo);
 }
-//$("#add-button").click(addToDoInList)
-
-//adaugare event listener pe butonul done daca e facut
-
 
 // creare functie care marcheaza done/undone (linie taiata peste scris)
 function markDoneTodo(buttonElm, todoId) {
-    $("#list-group-id").val() = "";
-    let li = buttonElm.parentNode.parentNode;
-    //let div = li.children(" :first").val()
+    // $("#list-group-id").empty()
+    // $("#list-group-id").html("")
+    let li = $(buttonElm).parent().parent();
+    let div = $(":first", li)
     let todoIndex = getTodoIndexById(todoId);
-    // if(toDoList[todoIndex].isDone) {
-    //     div.removeClass("text-decoration-line-through text-dark");
-    //     toDoList[todoIndex].isDone = false;
-    // }
-    // else {
-    //     div.addClass("text-decoration-line-through text-dark");
-    //     toDoList[todoIndex].isDone = false;
-    // }
-    toDoList[todoIndex].isDone = !toDoList[todoIndex].isDone;
-    displayToDoList()
-}
-
-function getTodoIndexByNAme(todoName) {
-    for (let i = 0; i < toDoList.length; i++) {
-        if(toDoList[i].name === todoName) {
-            return i;
-        }
+    if (toDoList[todoIndex].isDone) {
+        //div.removeClass("text-decoration-line-through");
+        $(":first", li).removeClass("text-decoration-line-through");
+        toDoList[todoIndex].isDone = false;
+        buttonElm.innerText = "Done"
+        $("#list-group2-id").remove(li);
+        $("#list-group-id").append(li);
+    } else {
+        div.addClass("text-decoration-line-through");
+        toDoList[todoIndex].isDone = true;
+        buttonElm.innerText = "Undone";
+        $("#list-group-id").remove(li);
+        $("#list-group2-id").append(li);
     }
+    // toDoList[todoIndex].isDone = !toDoList[todoIndex].isDone;
 }
 
-//adaugare event listener pe butonul delete
+// function markImportantTodo(buttonElm, todoId) {
+//     let li = $(buttonElm).parent().parent();
+//     let div = $(":first", li)
+//     let todoIndex = getTodoIndexById(todoId);
+//     if (toDoList[todoIndex].isImportant) {
+//         toDoList[todoIndex].isImportant = false;
+//         buttonElm.addClass("fa fa-bookmark-o")
+//     } else {
+//         toDoList[todoIndex].isImportant = true;
+//         buttonElm.addClass("fa fa-bookmark")
+//       //  $("#list-group1-id").remove(li);
+//         $("#list-group2-id").append(li);
+//     }
+// }
 
-//creare functie care sterge to do ul
+
 function deleteTodo(buttonElm, todoId) {
     let li = buttonElm.parentNode.parentNode;
     // let div = li.children(" :first").val()
@@ -117,9 +118,9 @@ function deleteTodo(buttonElm, todoId) {
     removeTodoByIndex(todoIndex)
 }
 
-function getTodoIndexById(id){
+function getTodoIndexById(id) {
     for (let i = 0; i < toDoList.length; i++) {
-        if(toDoList[i].id === id) {
+        if (toDoList[i].id === id) {
             return i;
         }
     }
@@ -131,3 +132,13 @@ function removeTodoByIndex(index) {
     }
     toDoList.length--;
 }
+
+// function addTodoInDoneItems() {
+//     let array = $("#list-group2-id");
+//     for (let i = 0; i < toDoList.length; i++) {
+//         if (toDoList[i].isDone === true && !array.includes(toDoList[i].isDone)) {
+//             array.push(toDoList[i])
+//         }
+//     }
+//     return array;
+// }

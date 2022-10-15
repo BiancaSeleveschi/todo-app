@@ -1,0 +1,26 @@
+h1 {
+    color: orange;
+}
+
+div {
+    color: blue;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+li:hover {
+    background: #2c2c86;
+}
+
+#important-items-id {
+    color: green;
+}
+
+#done-items-id {
+    color: black;
+}
+
